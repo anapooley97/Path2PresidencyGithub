@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
+    <title></title>
+
+    <link href="lib/ionic/css/ionic.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+
+    <!-- IF using Sass (run gulp sass first), then uncomment below and remove the CSS includes above
+    <link href="css/ionic.app.css" rel="stylesheet">
+    -->
+
+    <!-- ionic/angularjs js -->
+    <script src="lib/ionic/js/ionic.bundle.js"></script>
+
+    <!-- cordova script (this will be a 404 during development) -->
+    <script src="cordova.js"></script>
+
+    <!-- your app's js -->
+    <script src="js/app.js"></script>
+	
+  </head>
+
+	<style>
+	#nav {
+		line-height:30px;
+		background-color:#eeeeee;
+		width:50%;
+		float:left;
+		padding:5px; 
+	}
+	#section {
+		width:50%;
+		float:left;
+		padding:10px; 
+	}
+	img {
+		border:2px solid black;
+	}
+
+	</style>
+
+  <body ng-app="starter">
+    <ion-pane>
+      <ion-content>
+
+      <center>
+      <div>
+      	<h3>How many players?</h3>
+      	<div>
+      		<a class="button button-outline button-assertive" onclick="javascript: make_goals(2);" href="viewGame.html">2</a>
+      	</div>
+      	<div>
+      		<a class="button button-outline button-light" onclick="javascript: make_goals(3);" href="viewGame.html">3</a>
+      	</div>
+      	<div>
+      		<a class="button button-outline button-positive" onclick="javascript: make_goals(4);" href="viewGame.html">4</a>
+      	</div>
+      </div>
+      </center>
+
+      <script>
+      	var cands = [["Clinton", "Sanders", "O'Malley"], 
+      				["Trump", "Kasich", "Cruz"], 
+      				["Carson", "West", "Paul"]];
+      	var targets_arr = [];
+
+		function array_eq(array1, array2) {
+			return (array1.length == array2.length) && array1.every(function(elem, index) {return elem == array2[index]});
+		}
+
+		function in_goals(array, goals) {
+			var i;
+			for (i = 0; i < goals.length; i++) {
+				if (array_eq(array, goals[i])) {
+					return true;
+				}
+			}
+			return false;
+		}
+
+      	function make_goals(num_players) {
+      		var i;
+      		for (i = 0; i < num_players; i++) {
+      			var p_targets = [];
+      			var j = 0;
+      			while (j < 3) {
+      				var random_num = Math.floor(Math.random() * 3);
+      				p_targets.push(cands[j][random_num]);
+      				j++;
+      			}
+      			if (in_goals(p_targets, targets_arr)) {
+      				i--;
+      			} else {
+      				targets_arr[i] = p_targets;
+      			}
+      		}
+      		localStorage.setItem("num_players", num_players.toString());
+      		var z;
+	    	for (z = 0; z < targets_arr.length; z++) {
+	      		localStorage.setItem("targets" + z + "_arr", JSON.stringify(targets_arr[z]));
+	    	}
+      	}
+      </script>
+
+      </ion-content>
+    </ion-pane>
+  </body>
+</html>

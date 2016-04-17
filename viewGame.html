@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
+    <title></title>
+
+    <link href="lib/ionic/css/ionic.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+
+    <!-- IF using Sass (run gulp sass first), then uncomment below and remove the CSS includes above
+    <link href="css/ionic.app.css" rel="stylesheet">
+    -->
+
+    <!-- ionic/angularjs js -->
+    <script src="lib/ionic/js/ionic.bundle.js"></script>
+
+    <!-- cordova script (this will be a 404 during development) -->
+    <script src="cordova.js"></script>
+
+    <!-- your app's js -->
+    <script src="js/app.js"></script>
+	
+	<style>
+	body{
+		background-color: #EEE9E9;
+	}
+	
+	#rank {
+		line-height:30px;
+		width:30%;
+		float:left;
+		padding:5px; 
+	}
+	#moves {
+		width:30%;
+		float:left;
+		padding:10px; 
+	}
+	
+	img{
+		border:2px solid black;
+	}
+	
+	#rank1:hover{
+		height: 90px;
+	}
+	#rank2:hover{
+		height: 90px;
+	}
+	#rank3:hover{
+		height: 90px;
+	}
+	#rank4:hover{
+		height: 90px;
+	}
+	#rank5:hover{
+		height: 90px;
+	}
+	#rank6:hover{
+		height: 90px;
+	}
+	#rank7:hover{
+		height: 90px;
+	}
+	#rank8:hover{
+		height: 90px;
+	}
+	#rank9:hover{
+		height: 90px;
+	}
+	</style>
+  </head>
+  <body ng-app="starter">
+
+    <ion-pane>
+      <ion-header-bar class="bar-stable">
+        <!-- <h1 class="title">Ionic Blank Starter</h1> -->
+      </ion-header-bar>
+      <ion-content>
+				<center>
+	  <div>
+		<div id="rank">
+	  <center>
+		<img src = "" id = "rank1" onclick="javascript:selectCandidateCard(1);" height = "65px"></br>
+		<img src = "" id = "rank2" onclick="javascript:selectCandidateCard(2);" height = "65px"></br>
+		<img src = "" id = "rank3" onclick="javascript:selectCandidateCard(3);" height = "65px"></br>
+		<img src = "" id = "rank4" onclick="javascript:selectCandidateCard(4);" height = "65px"></br>
+		<img src = "" id = "rank5" onclick="javascript:selectCandidateCard(5);" height = "65px"></br>
+		<img src = "" id = "rank6" onclick="javascript:selectCandidateCard(6);" height = "65px"></br>
+		<img src = "" id = "rank7" onclick="javascript:selectCandidateCard(7);" height = "65px"></br>
+		<img src = "" id = "rank8" onclick="javascript:selectCandidateCard(8);" height = "65px"></br>
+		<img src = "" id = "rank9" onclick="javascript:selectCandidateCard(9);" height = "65px">
+		</center>
+		</div>
+
+	<div id="moves">
+	<center>
+		</br></br></br></br></br>
+		<img src = "p1img1.png" id = "img1" onclick="javascript:selectMoveCard(1);" height = "180px">
+		<img src = "p1img2.png" id = "img2" onclick="javascript:selectMoveCard(2);" height = "180px"></br>
+		<img src = "p1img3.png" id = "img3" onclick="javascript:selectMoveCard(3);" height = "180px">
+		<img src = "p1img4.png" id = "img4" onclick="javascript:selectMoveCard(4);" height = "180px">
+		<img src = "p1img5.png" id = "img5" onclick="javascript:selectMoveCard(5);" height = "180px"></br>
+		<img src = "p1img6.png" id = "img6" onclick="javascript:selectMoveCard(6);" height = "180px">
+		<img src = "p1img7.png" id = "img7" onclick="javascript:selectMoveCard(7);" height = "180px">
+	</center>
+	</div>
+	
+	<div id = "rank">
+		</br></br>
+		<img src = "player1.png" id = "player" height = "100px"></br>
+		<h2 id = "instructions">Select a Move Card</h2></br>
+		<img src = "hideScore.png" id = "myImage1" height = "60px"></br>
+		<img src = "hideScore.png" id = "myImage2" height = "60px"></br>
+		<img src = "hideScore.png" id = "myImage3" height = "60px"></br>
+		<button onclick="changeImage()">View/Hide Score Card</button></br></br>
+		<button id = "selectButton" onclick="buttonPressed()">Select Move Card</button>
+		<button id = "selectButton2" onclick="buttonPressed2()">Select Candidate Card</button>
+		
+	</div>	
+	
+	</div>
+	
+	</center>
+	
+	<!-- SCRIPT SECTION -->
+	<script>
+	var board = JSON.parse(localStorage.getItem("board_arr"));
+	var numPlayers = localStorage.getItem("num_players");
+	var gameOver = false;
+	
+	<!-- KEEP TRACK OF PLAYER TURN -->
+	var playerCount = 1;
+	var currentPlayer = playerCount % numPlayers;
+	
+	var player = [];
+	var i;
+	for (i = 0; i < numPlayers; i++) {
+		player.push("player" + (i + 1) + ".png");
+	}
+	
+	var numberCandidatesLeft = 9;
+	var trackCandidate;
+	var trackMoveSelect = 0;
+	var trackCandidateSelect = 0;
+	var selectMove = false;
+	var boards;
+	
+	var playerScoreCards = [];
+	for (i = 0; i < numPlayers; i++) {
+		playerScoreCards.push(JSON.parse(localStorage.getItem("targets" + i + "_arr")));
+	}
+
+
+	
+	var moveCards1 = ["up1", "up1", "up2", "up3", "topple", "toast", "toast"];
+	var moveCards2 = ["up1", "up1", "up2", "up3", "topple", "toast", "toast"];
+	var moveCards3 = ["up1", "up1", "up2", "up3", "topple", "toast", "toast"];
+	var moveCards4 = ["up1", "up1", "up2", "up3", "topple", "toast", "toast"];
+	
+	<!-- --><!-- --><!-- --><!-- --><!-- --><!-- --><!-- --><!-- --><!-- --><!-- --><!-- --><!-- --><!-- --><!-- --><!-- --><!-- --><!-- -->
+	
+	var playerCards = [moveCards1, moveCards2, moveCards3, moveCards4];
+	
+	
+	<!-- --><!-- --><!-- --><!-- --><!-- --><!-- --><!-- --><!-- --><!-- --><!-- --><!-- --><!-- --><!-- --><!-- --><!-- --><!-- --><!-- -->
+	
+	
+	for(i = 0; i < board.length; i++) {
+		var image = document.getElementById("rank"+(i+1));
+		image.src = board[i] + ".png";
+	}
+	
+	
+	function cardRefresh(){
+		var i;
+		var curScoreCard = playerScoreCards[playerCount-1];
+		for (i = 0; i < curScoreCard.length; i++) {
+			var image = document.getElementById('myImage' + (i + 1));
+				image.src = "hideScore.png";
+		}
+
+		var currentMoveCards = playerCards[playerCount-1];
+		for(y=0; y<7; y++){
+			if(currentMoveCards[y] != "null"){
+				var image = document.getElementById("img" + (y+1));
+				image.src = ("p" + (playerCount)+"img" + (y+1) + ".png").toString();
+			}
+			else{
+				var image = document.getElementById("img" + (y+1));
+				image.src = ("p"+(playerCount) + "back.png");
+			}
+		}
+	
+	}
+
+	function continueTurns() {
+		trackMoveSelect = 0;
+		trackCandidateSelect = 0;
+		selectMove = false;
+		candidateSelected = false;
+		buttonNumber = 0;
+		buttonNumber2 = 0;
+		if(playerCount == numPlayers){
+			playerCount = 1;
+			var image = document.getElementById('player');
+			image.src = player[0];
+			cardRefresh();
+		}
+		else{
+			playerCount++;
+			var image = document.getElementById('player');
+			image.src = player[playerCount-1];
+			cardRefresh();
+		}
+		cleanTheGreen();
+	}
+	
+	function checkGameOver(){
+		
+		var count = 0;
+		for(b = 0; b<9; b++){
+			if(moveCards4[b] == "null"){
+				count++;
+			}
+		}
+		
+		if(count == 9){
+		
+			gameOver = true;
+			
+			var winner = "";
+			
+			if(p1Points > p2Points && p1Points > p3Points && p1Points > p4Points){
+				winner = "Player 1!";
+			}
+			else if(p2Points > p1Points && p2Points > p3Points && p2Points > p4Points){
+				winner = "Player 2!";
+			}
+			else if(p3Points > p1Points && p3Points > p2Points && p3Points > p4Points){
+				winner = "Player 3!";
+			}
+			else if(p4Points > p3Points && p4Points > p2Points && p4Points > p1Points){
+				winner = "Player 4!";
+			}
+			
+			document.getElementById("instructions").innerHTML = "Game Over! The winner is: " + winner;
+		
+		}
+	
+	}
+	
+	
+	var buttonNumber = 0;
+	
+	function changeImage() {
+		var i;
+		var curScoreCard = playerScoreCards[playerCount-1];
+		for (i = 0; i < curScoreCard.length; i++) {
+			var image = document.getElementById('myImage' + (i + 1));
+			if (image.src.match("hideScore.png")) {
+				image.src = curScoreCard[i] + ".png";
+			} else {
+				image.src = "hideScore.png";
+			}
+		}
+	}
+	
+	
+	function selectMoveCard(index){
+		if(selectMove == false){
+			if(trackMoveSelect == 1){
+				document.getElementById("img1").style.borderColor="black";
+				document.getElementById("img2").style.borderColor="black";
+				document.getElementById("img3").style.borderColor="black";
+				document.getElementById("img4").style.borderColor="black";	
+				document.getElementById("img5").style.borderColor="black";
+				document.getElementById("img6").style.borderColor="black";
+				document.getElementById("img7").style.borderColor="black";
+			}
+		document.getElementById("img"+index).style.borderColor="#00FF00";
+		trackMoveSelect = 1;
+		buttonNumber = 1;
+		trackMoveCard = index;
+		}
+		
+	}
+	
+	function cleanTheGreen(){
+	
+				document.getElementById("img1").style.borderColor="black";
+				document.getElementById("img2").style.borderColor="black";
+				document.getElementById("img3").style.borderColor="black";
+				document.getElementById("img4").style.borderColor="black";	
+				document.getElementById("img5").style.borderColor="black";
+				document.getElementById("img6").style.borderColor="black";
+				document.getElementById("img7").style.borderColor="black";
+				
+				document.getElementById("rank1").style.borderColor="black";
+				document.getElementById("rank2").style.borderColor="black";
+				document.getElementById("rank3").style.borderColor="black";
+				document.getElementById("rank4").style.borderColor="black";	
+				document.getElementById("rank5").style.borderColor="black";
+				document.getElementById("rank6").style.borderColor="black";
+				document.getElementById("rank7").style.borderColor="black";
+				document.getElementById("rank8").style.borderColor="black";
+				document.getElementById("rank9").style.borderColor="black";
+				
+	}
+
+		
+	function buttonPressed(){
+	
+		var movePlayerCards = playerCards[playerCount-1];
+		
+		if(buttonNumber == 0){
+			document.getElementById("instructions").innerHTML = "Select a move card.";
+		}
+		if(buttonNumber == 1 && movePlayerCards[trackMoveCard-1]!= "null"){
+			
+			if(trackMoveCard==6 || trackMoveCard == 7){
+			
+				if(trackMoveCard == 6){
+					var image = document.getElementById("rank"+numberCandidatesLeft);
+					image.src = "toast.png";
+					var image = document.getElementById("img"+trackMoveCard);
+					image.src = ("p" + playerCount + "back.png");
+					movePlayerCards[trackMoveCard-1] = "null";
+					board[numberCandidatesLeft-1] = "null";
+					numberCandidatesLeft = numberCandidatesLeft-1;
+					trackMoveCard = 0;
+					if(playerCount == numPlayers){
+					playerCount = 1;
+					var image = document.getElementById('player');
+					image.src = player[0];
+					cardRefresh();
+					}
+					else{
+					playerCount++;
+					var image = document.getElementById('player');
+					cardRefresh();
+					image.src = player[playerCount-1];
+					}
+					document.getElementById("instructions").innerHTML = "Select a move card.";
+				}
+				else{
+					var image = document.getElementById("rank"+numberCandidatesLeft);
+					image.src = "toast.png";
+					var image = document.getElementById("img"+trackMoveCard);
+					image.src = ("p" + playerCount + "back.png");
+					movePlayerCards[trackMoveCard-1] = "null";
+					board[numberCandidatesLeft-1] = "null";
+					numberCandidatesLeft = numberCandidatesLeft-1;
+					trackMoveCard = 0;
+					if(playerCount == numPlayers){
+					playerCount = 1;
+					var image = document.getElementById('player');
+					image.src = player[0];
+					cardRefresh();
+					}
+					else{
+					playerCount++;
+					cardRefresh();
+					var image = document.getElementById('player');
+					image.src = player[playerCount-1];
+					}
+					document.getElementById("instructions").innerHTML = "Select a move card.";
+				}
+			
+			}
+			else{
+			document.getElementById("instructions").innerHTML = "Now select a candidate to move.";
+				selectMove = true;
+				buttonNumber = 2;
+				var image = document.getElementById("img"+trackMoveCard);
+				image.src = ("p" + playerCount + "back.png");
+				movePlayerCards[trackMoveCard-1] = "null";
+			}
+
+			
+			
+		}
+		else if(movePlayerCards[trackMoveCard-1] == "null"){
+			document.getElementById("instructions").innerHTML = "You have already used this card.";
+		}
+			
+	}
+	
+
+	var candidateSelected = false;
+	var buttonNumber2 = 0;
+		
+	function buttonPressed2(){
+		if(buttonNumber2 == 0){
+			document.getElementById("instructions").innerHTML = "Select a candidate card.";
+		}
+		if(buttonNumber2 == 1){
+			candidateSelected = true;
+			document.getElementById("instructions").innerHTML = "Candidate selected.";
+			buttonNumber2 = 2;
+			moveCandidate();
+		}
+			
+	}
+		
+	function selectCandidateCard(index){
+		if(selectMove == true && candidateSelected == false){
+			if(trackCandidateSelect == 1){
+				document.getElementById("rank1").style.borderColor="black";
+				document.getElementById("rank2").style.borderColor="black";
+				document.getElementById("rank3").style.borderColor="black";
+				document.getElementById("rank4").style.borderColor="black";	
+				document.getElementById("rank5").style.borderColor="black";
+				document.getElementById("rank6").style.borderColor="black";
+				document.getElementById("rank7").style.borderColor="black";
+				document.getElementById("rank8").style.borderColor="black";
+				document.getElementById("rank9").style.borderColor="black";
+			}
+		document.getElementById("rank"+index).style.borderColor="#00FF00";
+		trackCandidateSelect = 1;
+		buttonNumber2 = 1;
+		trackCandidate = index;	
+		}
+		
+	}
+	
+	
+	function moveCandidate(){
+		if(trackMoveCard == 1 || trackMoveCard ==2){
+			if(trackCandidate > 1){
+				
+				if(board[trackCandidate-1] == "Clinton"){
+					document.getElementById("instructions").innerHTML = "Previous Move: Katy Perry writes Clinton a theme song! (1 Up)";
+				}
+				else if(board[trackCandidate-1] == "Trump"){
+					document.getElementById("instructions").innerHTML = "Previous Move: Trump makes a good investment! (1 Up)";
+				}
+				else if(board[trackCandidate-1] == "Sanders"){
+					document.getElementById("instructions").innerHTML = "Previous Move: Sanders asks #WhichHillary - which starts trending. (1 Up)";
+				}
+				else if(board[trackCandidate-1] == "O'Malley"){
+					document.getElementById("instructions").innerHTML = "Previous Move: Go to http://martinomalley.com! (1 Up)";
+				}
+				else if(board[trackCandidate-1] == "Kasich"){
+					document.getElementById("instructions").innerHTML = "Previous Move: Kasich still doesn’t drop out. (1 Up)";
+				}
+				else if(board[trackCandidate-1] == "West"){
+					document.getElementById("instructions").innerHTML = "Previous Move: Kanye releases a new album. (1 Up)";
+				}
+				else if(board[trackCandidate-1] == "Carson"){
+					document.getElementById("instructions").innerHTML = "Previous Move: Carson gets invited to a GOP debate. (1 Up)";
+				}
+				else if(board[trackCandidate-1] == "Cruz"){
+					document.getElementById("instructions").innerHTML = "Previous Move: Cruz appeals to people from texas or something idk. (1 Up)";
+				}
+				else if(board[trackCandidate-1] == "Paul"){
+					document.getElementById("instructions").innerHTML = "Previous Move: Ron Paul filibusters for 21 hours. (1 Up)";
+				}
+				
+				<!-- UP ONE DESCRIPTIONS -->
+
+
+				var candidate1 = board[trackCandidate-2];
+				board[trackCandidate-2] = board[trackCandidate-1];
+				board[trackCandidate-1] = candidate1;
+				var image = document.getElementById("rank"+trackCandidate);
+				var image2 = document.getElementById("rank"+(trackCandidate-1));
+				var source = image.src;
+				var source2 = image2.src;
+				image.src = source2;
+				image2.src = source;
+				continueTurns();
+			}
+			else{
+				document.getElementById("instructions").innerHTML = "Select a different candidate.";
+				candidateSelected = false;
+				buttonNumber2 = 0;
+			}
+		}
+		
+		if(trackMoveCard == 3){
+		<!-- UP 2 CARD -->
+		
+			if(trackCandidate > 2){
+				
+				if(board[trackCandidate-1] == "Clinton"){
+				document.getElementById("instructions").innerHTML = "Previous Move: Clinton reminds people she is a woman. (Up 2)";
+				}
+				else if(board[trackCandidate-1] == "Trump"){
+				document.getElementById("instructions").innerHTML = "Previous Move: Trump talks about building the wall. (Up 2)";
+				}
+				else if(board[trackCandidate-1] == "Sanders"){
+				document.getElementById("instructions").innerHTML = "Previous Move: A Bird lands on Sanders’ podium. (Up 2)";
+				}
+				else if(board[trackCandidate-1] == "O'Malley"){
+				document.getElementById("instructions").innerHTML = "Previous Move: Go to http://martinomalley.com! (Up 2)";
+				}
+				else if(board[trackCandidate-1] == "Kasich"){
+				document.getElementById("instructions").innerHTML = "Previous Move: Reminds people that there was a decrease in unemployment after the depression in Ohio. (Up 2)";
+				}
+				else if(board[trackCandidate-1] == "West"){
+				document.getElementById("instructions").innerHTML = "Previous Move: Zuckerberg invests in Kanye West's ideas! (Up 2)";
+				}
+				else if(board[trackCandidate-1] == "Carson"){
+				document.getElementById("instructions").innerHTML = "Previous Move: Carson’s a doctor, so he’s smart . . . right? (Up 2)";
+				}
+				else if(board[trackCandidate-1] == "Cruz"){
+				document.getElementById("instructions").innerHTML = "Previous Move: Cruz Isn’t Trump. (Up 2)";
+				}
+				else if(board[trackCandidate-1] == "Ron Paul"){
+				document.getElementById("instructions").innerHTML = "Previous Move: Ron Paul becomes a meme. (Up 2)";
+				}
+				
+				<!-- UP TWO DESCRIPTIONS -->
+
+
+				var candidate2 = board[trackCandidate-2];
+				board[trackCandidate-2] = board[trackCandidate-1];
+				board[trackCandidate-1] = candidate2;
+				var candidate1 = board[trackCandidate-3];
+				board[trackCandidate-3] = board[trackCandidate-2];
+				board[trackCandidate-2] = candidate1;
+				var image = document.getElementById("rank"+trackCandidate);
+				var image2 = document.getElementById("rank"+(trackCandidate-1));
+				var image3 = document.getElementById("rank"+(trackCandidate-2));
+				var source = image.src;
+				var source2 = image2.src;
+				var source3 = image3.src;
+				image.src = source2;
+				image2.src = source3;
+				image3.src = source;
+
+				continueTurns();
+			}
+			else{
+				document.getElementById("instructions").innerHTML = "Select a difference candidate.";
+				candidateSelected = false;
+				buttonNumber2 = 0;
+			}
+		}
+		if(trackMoveCard == 4){
+		<!-- UP 3 CARD -->
+		
+			if(trackCandidate > 3){
+				
+				if(board[trackCandidate-1] == "Clinton"){
+				document.getElementById("instructions").innerHTML = "Previous Move: Clinton raises $200,000,000 from Super PACs. (Up 3)";
+				}
+				else if(board[trackCandidate-1] == "Trump"){
+				document.getElementById("instructions").innerHTML = "Previous Move: Trump promises to Make America Great again! (Up 3)";
+				}
+				else if(board[trackCandidate-1] == "Sanders"){
+				document.getElementById("instructions").innerHTML = "Previous Move: Sanders gets an average contribution of $27. (Up 3)";
+				}
+				else if(board[trackCandidate-1] == "O'Malley"){
+				document.getElementById("instructions").innerHTML = "Previous Move: Go to http://martinomalley.com! (Up 3)";
+				}
+				else if(board[trackCandidate-1] == "Kasich"){
+				document.getElementById("instructions").innerHTML = "Previous Move: GOP establishment rigs delegates for Kasich. (Up 3)";
+				}
+				else if(board[trackCandidate-1] == "West"){
+				document.getElementById("instructions").innerHTML = "Previous Move: What’s a president to a god? (Up 3)";
+				}
+				else if(board[trackCandidate-1] == "Carson"){
+				document.getElementById("instructions").innerHTML = "Previous Move: Carson performs surgery on the pope. (Up 3)";
+				}
+				else if(board[trackCandidate-1] == "Cruz"){
+				document.getElementById("instructions").innerHTML = "Previous Move: Cruz kills the competition. (Up 3)";
+				}
+				else if(board[trackCandidate-1] == "Ron Paul"){
+				document.getElementById("instructions").innerHTML = "Previous Move: IT’S HAPPENING! (Up 3)";
+				}
+				
+				
+				<!-- UP THREE DESCRIPTIONS -->
+
+
+				var candidate3 = board[trackCandidate-2];
+				board[trackCandidate-2] = board[trackCandidate-1];
+				board[trackCandidate-1] = candidate3;
+				var candidate2 = board[trackCandidate-3];
+				board[trackCandidate-3] = board[trackCandidate-2];
+				board[trackCandidate-2] = candidate2;
+				var candidate1 = board[trackCandidate-4];
+				board[trackCandidate-4] = board[trackCandidate-3];
+				board[trackCandidate-3] = candidate1;
+				var image = document.getElementById("rank"+trackCandidate);
+				var image2 = document.getElementById("rank"+(trackCandidate-1));
+				var image3 = document.getElementById("rank"+(trackCandidate-2));
+				var image4 = document.getElementById("rank"+(trackCandidate-3));
+				var source = image.src;
+				var source2 = image2.src;
+				var source3 = image3.src;
+				var source4 = image4.src;
+				image.src = source2;
+				image2.src = source3;
+				image3.src = source4;
+				image4.src = source;
+
+				continueTurns();
+			}
+			else{
+				document.getElementById("instructions").innerHTML = "Select a difference candidate.";
+				candidateSelected = false;
+				buttonNumber2 = 0;
+			}
+		}
+		
+		if(trackMoveCard == 5){
+			if(trackCandidate<9){
+				if(board[trackCandidate-1] == "Clinton"){
+				document.getElementById("instructions").innerHTML = "Clinton's Decline: America's Youth becomes informed. (Topple)";
+				}
+				else if(board[trackCandidate-1] == "Trump"){
+				document.getElementById("instructions").innerHTML = "Trump's Decline: calls immigrants racists. (Topple)";
+				}
+				else if(board[trackCandidate-1] == "Sanders"){
+				document.getElementById("instructions").innerHTML = "Sander's Decline: gets Ignored by the Media. (Topple)";
+				}
+				else if(board[trackCandidate-1] == "O'Malley"){
+				document.getElementById("instructions").innerHTML = "O'Malley's Decline: nobody visits http://martinomalley.com. (Topple)";
+				}
+				else if(board[trackCandidate-1] == "Kasich"){
+				document.getElementById("instructions").innerHTML = "Kasich's Decline: loses primary to Rubio after dropping out. (Topple)";
+				}
+				else if(board[trackCandidate-1] == "West"){
+				document.getElementById("instructions").innerHTML = "Kanye's Decline: crashes the VMA’s ... again. (Topple)";
+				}
+				else if(board[trackCandidate-1] == "Carson"){
+				document.getElementById("instructions").innerHTML = "Carson's Decline: falls asleep during debate. (Topple)";
+				}
+				else if(board[trackCandidate-1] == "Cruz"){
+				document.getElementById("instructions").innerHTML = "Cruz's Decline: eats his own booger. (Topple)";
+				}
+				else if(board[trackCandidate-1] == "Ron Paul"){
+				document.getElementById("instructions").innerHTML = "Ron Paul's Decline: realize 0.001% of his proposed bills have become laws. (Topple)";
+				}
+				
+				<!-- TOPPLE DESCRIPTIONS -->
+
+				for(a = 0; a < (9-trackCandidate); a++){
+				
+					if(board[trackCandidate+a]!= null){
+						var candidate = board[trackCandidate+a];
+						board[trackCandidate+a] = board[trackCandidate+a+1];
+						board[trackCandidate+a+1] = candidate;
+
+						var image = document.getElementById("rank" + (trackCandidate+a));
+						var image2 = document.getElementById("rank" + (trackCandidate+a+1));
+						var source = image.src;
+						var source2 = image2.src;
+						image.src = source2;
+						image2.src = source;
+					}
+				
+				}
+				
+				continueTurns();
+				
+			}
+			else{
+				document.getElementById("instructions").innerHTML = "Select a difference candidate.";
+				candidateSelected = false;
+				buttonNumber2 = 0;
+			}
+		}
+		
+	}
+
+	
+	
+</script>
+      </ion-content>
+    </ion-pane>
+  </body>
+</html>
